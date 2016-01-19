@@ -12,10 +12,10 @@
 		AB13ECAB1C494403006E134C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB13ECA91C494403006E134C /* MainMenu.xib */; };
 		AB13ECB61C494403006E134C /* CalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB13ECB51C494403006E134C /* CalculatorTests.swift */; };
 		AB13ECC11C494403006E134C /* CalculatorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB13ECC01C494403006E134C /* CalculatorUITests.swift */; };
+		AB1434A11C4E8C0F00CED04A /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = AB1434A01C4E8C0F00CED04A /* README.md */; };
 		AB78AAC21C4DB10D00D374BF /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78AAC11C4DB10D00D374BF /* CalculatorBrain.swift */; };
 		AB989B991C49BD2E00D0271F /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB989B971C49BD2E00D0271F /* MasterViewController.swift */; };
 		AB989B9A1C49BD2E00D0271F /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB989B981C49BD2E00D0271F /* MasterViewController.xib */; };
-		ABCD0B101C4E8A2600FDDBEE /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = ABCD0B0F1C4E8A2600FDDBEE /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,10 +47,10 @@
 		AB13ECBC1C494403006E134C /* CalculatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CalculatorUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AB13ECC01C494403006E134C /* CalculatorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorUITests.swift; sourceTree = "<group>"; };
 		AB13ECC21C494403006E134C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AB1434A01C4E8C0F00CED04A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		AB78AAC11C4DB10D00D374BF /* CalculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorBrain.swift; sourceTree = "<group>"; };
 		AB989B971C49BD2E00D0271F /* MasterViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
 		AB989B981C49BD2E00D0271F /* MasterViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MasterViewController.xib; sourceTree = "<group>"; };
-		ABCD0B0F1C4E8A2600FDDBEE /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = "OSX-Calculator/README.md"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,7 +85,7 @@
 				AB13ECB41C494403006E134C /* CalculatorTests */,
 				AB13ECBF1C494403006E134C /* CalculatorUITests */,
 				AB13ECA31C494403006E134C /* Products */,
-				ABCD0B0F1C4E8A2600FDDBEE /* README.md */,
+				AB1434A01C4E8C0F00CED04A /* README.md */,
 			);
 			sourceTree = "<group>";
 		};
@@ -272,7 +272,7 @@
 			files = (
 				AB78AAC21C4DB10D00D374BF /* CalculatorBrain.swift in Sources */,
 				AB989B991C49BD2E00D0271F /* MasterViewController.swift in Sources */,
-				ABCD0B101C4E8A2600FDDBEE /* README.md in Sources */,
+				AB1434A11C4E8C0F00CED04A /* README.md in Sources */,
 				AB13ECA61C494403006E134C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
