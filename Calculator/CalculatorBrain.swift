@@ -62,6 +62,11 @@ class CalculatorBrain {
         knownOps["√"] = Op.UnaryOperation("√", {sqrt($0)})
         knownOps["sin"] = Op.UnaryOperation("sin", {sin($0)})
         knownOps["cos"] = Op.UnaryOperation("cos", {cos($0)})
+        knownOps["±"] = Op.UnaryOperation("±", {(value) in
+            if(value>0) {
+                return value * -1
+            }
+            return abs(value)})
         knownOps["π"] = Op.Operand(M_PI)
     }
     

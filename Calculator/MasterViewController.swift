@@ -37,7 +37,7 @@ class MasterViewController: NSViewController {
         set {
             if (newValue != nil) {
                 display.stringValue = "\(newValue!)"
-                isTyping = false
+                //isTyping = false
             } else {
                 display.stringValue = defaultDisplayText
             }
@@ -185,11 +185,18 @@ class MasterViewController: NSViewController {
      * @param sender - A Button object holding the current button pressed.
      */
     @IBAction func changeSign(sender: NSButtonCell) {
-        if (display.stringValue.characters.count > 1) {
+        print(isTyping)
+        if (isTyping) {
             if (displayValue < 0) {
                 displayValue = displayValue! * -1
             } else {
                 displayValue = displayValue! - displayValue! * 2
+            }
+        } else if(!isTyping) {
+            if let result = brain.preformOperation("±") {
+                displayValue = result
+            } else {
+                displayValue = nil
             }
         }
     }
