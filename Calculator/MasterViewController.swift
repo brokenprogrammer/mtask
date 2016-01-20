@@ -81,14 +81,14 @@ class MasterViewController: NSViewController {
     }
     
     /*
-     * enter adds the current numbers on the display to the opperandStack as well as adding
-     * the enter action to the history.
+     * enter pushes the current values on the display to the CalculatorBrain.
+     * Sets the displays value to the result of pushing the operand and appending the
+     * action made to the history.
      * @param sender - is not used.
      */
     @IBAction func enter(sender: AnyObject) {
         isTyping = false
         if (displayValue != nil) {
-            //opperandStack.append(displayValue!)
             if let result = brain.pushOperand(displayValue!) {
                 displayValue = result
             } else {
@@ -99,14 +99,12 @@ class MasterViewController: NSViewController {
     }
     
     /*
-     * enter adds the current numbers on the display to the opperandStack. The difference between
-     * this overloaded function is that this one does not append anything to the history.
-     * @param sender - is not used.
+     * enter pushes the current values on the display to the CalculatorBrain.
+     * Sets the displays value to the result of pushing the operand.
      */
     func enter() {
         isTyping = false
         if (displayValue != nil) {
-            //opperandStack.append(displayValue!)
             if let result = brain.pushOperand(displayValue!) {
                 displayValue = result
             } else {
@@ -116,10 +114,11 @@ class MasterViewController: NSViewController {
     }
     
     /*
-     * operate uses the opperand stack together with the title of the button pressed
-     * to choose an operation to preform. It depends on the title of the button then
-     * it calls a closure function. This function also appends the choosen operation to
-     * the history.
+     * operate sends the title of the button pressed to our CalculatorBrain that
+     * processes the title and preforms an operation depending on the case.
+     * if the operation from CalculatorBrain fails the display will be set to the default
+     * value.
+     * operate also appends the operation to the history.
      * @param sender - The pressed button.
      */
     @IBAction func operate(sender: NSButton) {
@@ -139,60 +138,7 @@ class MasterViewController: NSViewController {
         } else {
             displayValue = nil
         }
-        
-        //appendHistory("=")
-       /*
-        switch operation {
-        case "*": preformOperation({ $0 * $1 })
-        case "÷":
-            preformOperation({ (op1: Double, op2: Double) -> Double in
-                return op2 / op1
-            })
-        case "+": preformOperation({ (op1, op2) in return op1 + op2 })
-        case "-": preformOperation({ (op1, op2) in return op2 - op1 })
-        case "√": preformOperation{sqrt($0)}
-        case "sin": preformOperation{ sin($0) }
-        case "cos": preformOperation{ cos($0) }
-        case "π": addConstant(M_PI)
-        default: break
-        }*/
     }
-    
-    /*
-     * preformOperation Closure function that takes in a function in the parameters 
-     * that returns a double, then uses the closure function while removing the 
-     * last values on the opperand stack. Also calls the empty enter function to not
-     * display the enter press.
-     * @param operation - a function that takes in two doubles and returns one double.
-     */
-   /* func preformOperation(operation: (Double, Double) -> Double) {
-        if (opperandStack.count >= 2) {
-            displayValue = operation(opperandStack.removeLast(),opperandStack.removeLast())
-            if (displayValue != nil) {
-                appendHistory("= \(displayValue!)")
-            }
-            clearHistory = true
-            enter()
-        }
-    }
-    
-    /*
-     * preformOperation Closure function that takes in a function in the parameters
-     * that returns a double, then uses the closure function while removing the
-     * last value on the opperand stack. Also calls the empty enter function to not
-     * display the enter press.
-     * @param operation - a function that takes in a double and returns one double.
-     */
-    private func preformOperation(operation: Double -> Double) {
-        if (opperandStack.count >= 1) {
-            displayValue = operation(opperandStack.removeLast())
-            if (displayValue != nil) {
-                appendHistory("= \(displayValue!)")
-            }
-            clearHistory = true
-            enter()
-        }
-    } */
     
     /*
      * addConstant A function used to add constants to the display.
