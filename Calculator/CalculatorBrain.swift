@@ -28,6 +28,7 @@ class CalculatorBrain {
      */
     private enum Op: CustomStringConvertible{
         case Operand(Double)
+        case Variable(String)
         case UnaryOperation(String, Double -> Double)
         case BinaryOperation(String, (Double, Double) -> Double)
         
@@ -36,6 +37,8 @@ class CalculatorBrain {
                 switch self {
                 case .Operand(let operand):
                     return "\(operand)"
+                case .Variable(let symbol):
+                    return symbol
                 case .UnaryOperation(let symbol, _):
                     return symbol
                 case .BinaryOperation(let symbol, _):
@@ -45,8 +48,9 @@ class CalculatorBrain {
         }
     }
     
-    private var opStack = [Op]()                    // opStack is the stack of Operations in the order they are added.
-    private var knownOps = Dictionary<String, Op>() // knownOps uses the operation symbols as keys and operation function as values.
+    private var opStack = [Op]()                      // opStack is the stack of Operations in the order they are added.
+    private var knownOps = Dictionary<String, Op>()   // knownOps uses the operation symbols as keys and operation function as values.
+    var variableValues = Dictionary<String, Double>() //variableValues holds variables the user pushes to the opStack with their values
     
     /*
      * CalculatorBrain Initializer
@@ -68,6 +72,8 @@ class CalculatorBrain {
             }
             return abs(value)})
         knownOps["π"] = Op.Operand(M_PI)
+        variableValues["x"] = 10
+        pushOperand("x")
     }
     
     /*
@@ -80,6 +86,21 @@ class CalculatorBrain {
      */
     func pushOperand(operand: Double) -> Double? {
         opStack.append(Op.Operand(operand))
+        return evaluate()
+    }
+    
+    /*
+    * pushOperand
+    * This function pushes an variable to our opStack and then returns the function
+    * evaluate which will evaluate the entire stack.
+    *
+    * @param symbol - A String that will represent a varialbe the calculator can work with.
+    * @returns evaluate() - A function that evaluates the entire opStack.
+    */
+    func pushOperand(symbol: String) -> Double? {
+        if variableValues[symbol] != nil {
+            opStack.append(Op.Variable(symbol))
+        }
         return evaluate()
     }
     
@@ -133,6 +154,12 @@ class CalculatorBrain {
             switch op {
             case .Operand(let operand):                 //If its an Operand then we can just return it together with the remaining opStack
                 return (operand, remaining)
+                
+            case .Variable(let symbol):                 //If its an variable we can just return the value of that variable.
+                if let variable = variableValues[symbol] {
+                    return (variable, remaining)
+                }
+                return (0, remaining)
                 
             case .UnaryOperation(_, let operation):     //If its an UnaryOperation we use the operation function for this operation.
                 
