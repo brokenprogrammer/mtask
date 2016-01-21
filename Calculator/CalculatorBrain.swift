@@ -16,20 +16,22 @@ import Foundation
 class CalculatorBrain {
     var description: String {
         get {
-            var history = " "
+            var history = [String]()
             var contents = opStack
-            var info = evaluateDescription(contents)
+            var info = evaluateDescription(contents, parrentBinary: false)
             
             repeat {
             if (info.result != nil) {
-                history = info.result! + ", " + history
+                //history = info.result! + ", " + history
+                //history.append(info.result!)
+                history.insert(info.result!, atIndex: 0)
                 contents = info.remaining
-                info = evaluateDescription(contents)
+                info = evaluateDescription(contents, parrentBinary: false)
                 }
             } while(contents.count > 0)
             
             print(history)
-            return history
+            return history.joinWithSeparator(", ")
             
         }
     }
@@ -96,8 +98,8 @@ class CalculatorBrain {
             }
             return abs(value)})
         knownOps["π"] = Op.Constant("π", M_PI)
-        variableValues["x"] = 10
-        pushOperand("x")
+        //variableValues["x"] = 10
+        //pushOperand("x")
     }
     
     /*
@@ -122,9 +124,9 @@ class CalculatorBrain {
     * @returns evaluate() - A function that evaluates the entire opStack.
     */
     func pushOperand(symbol: String) -> Double? {
-        if variableValues[symbol] != nil {
+        //if variableValues[symbol] != nil {
             opStack.append(Op.Variable(symbol))
-        }
+        //}
         return evaluate()
     }
     
@@ -221,12 +223,11 @@ class CalculatorBrain {
         return (nil, ops)
     }
     
-    private func evaluateDescription(opss: [Op]) -> (result: String?, remaining: [Op]) {
+    private func evaluateDescription(opss: [Op], parrentBinary: Bool) -> (result: String?, remaining: [Op]) {
         
         if (!opss.isEmpty) {
             var remaining = opss
             let op = remaining.removeLast()
-            print(op.description)
             
             switch op {
             case .Operand(_):
@@ -239,7 +240,7 @@ class CalculatorBrain {
                 return (op.description, remaining)
                 
             case .UnaryOperation(_, _):
-                let operandEvaluation = evaluateDescription(remaining)
+                let operandEvaluation = evaluateDescription(remaining, parrentBinary: false)
                 
                 if let operand = operandEvaluation.result {
                     return (op.description + "(\(operand))", operandEvaluation.remaining)
@@ -248,16 +249,21 @@ class CalculatorBrain {
                 }
                 
             case .BinaryOperation(_, _):
-                let operandEval1 = evaluateDescription(remaining)
+                let operandEval1 = evaluateDescription(remaining, parrentBinary: true)
                 
                 if let operand1 = operandEval1.result {
-                    let operandEval2 = evaluateDescription(operandEval1.remaining)
+                    let operandEval2 = evaluateDescription(operandEval1.remaining, parrentBinary: true)
                     
                     if let operand2 = operandEval2.result {
+                        if (parrentBinary == true) {
+                            return ("(" + operand2 + op.description + operand1 + ")", operandEval2.remaining)
+                        }
                         return (operand2 + op.description + operand1, operandEval2.remaining)
                     } else {
                         return (missingValueSign + op.description + operand1, operandEval1.remaining)
                     }
+                } else {
+                    return (missingValueSign + op.description + missingValueSign, remaining)
                 }
             }
         }

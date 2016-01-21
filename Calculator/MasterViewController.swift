@@ -16,10 +16,9 @@ class MasterViewController: NSViewController {
     var brain = CalculatorBrain()
     
     private let defaultDisplayText = "0"
+    private let defaultHistory = " "
     var isTyping = false
     var clearHistory = false
-    
-    //var opperandStack = Array<Double>()
     
     /*
      * a getter setter variable that we use to append values to the display
@@ -35,25 +34,19 @@ class MasterViewController: NSViewController {
             }
         }
         set {
+            history.stringValue = brain.description + " ="
             if (newValue != nil) {
                 display.stringValue = "\(newValue!)"
                 //isTyping = false
             } else {
                 display.stringValue = defaultDisplayText
             }
-        }
-    }
-    
-    /*
-     * appendHistory is a function used to append actions to the history label
-     * @param value - String to append to the history label
-     */
-    func appendHistory(value: String) {
-        if (!clearHistory) {
-            history.stringValue = history.stringValue + "\(value)"
-        } else {
-            history.stringValue = "\(value)"
-            clearHistory = false
+            
+            if !brain.description.isEmpty {
+                history.stringValue = "\(brain.description) ="
+            } else {
+                history.stringValue = defaultHistory
+            }
         }
     }
     
@@ -94,9 +87,7 @@ class MasterViewController: NSViewController {
             } else {
                 displayValue = nil
             }
-            appendHistory("\(displayValue!) ⏎ ")
         }
-        //brain.description
     }
     
     /*
@@ -126,11 +117,9 @@ class MasterViewController: NSViewController {
         let operation = sender.title
         
         if (!history.stringValue.containsString("\(operation)")) {
-            appendHistory("\(operation)")
         }
         
         if (isTyping) {
-            appendHistory("\(displayValue!)")
             enter()
         }
         
@@ -139,8 +128,6 @@ class MasterViewController: NSViewController {
         } else {
             displayValue = nil
         }
-        
-        brain.description
     }
     
     /*
@@ -161,7 +148,6 @@ class MasterViewController: NSViewController {
      */
     @IBAction func reset(sender: AnyObject) {
         isTyping = false
-        //opperandStack.removeAll()
         displayValue = 0
         history.stringValue = ""
         display.stringValue = "0"
