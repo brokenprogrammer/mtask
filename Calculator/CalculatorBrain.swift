@@ -16,32 +16,20 @@ import Foundation
 class CalculatorBrain {
     var description: String {
         get {
-            let contents = opStack
-            /*var curr = 0
-            var ourString = ""
+            var history = " "
+            var contents = opStack
+            var info = evaluateDescription(contents)
             
-            for index in contents{
-                switch index {
-                case .Operand(_):
-                    ourString += index.description
-                case .UnaryOperation(let symbol, _):
-                    ourString += "\(symbol)(\(10))"
-                default: break
+            repeat {
+            if (info.result != nil) {
+                history = info.result! + ", " + history
+                contents = info.remaining
+                info = evaluateDescription(contents)
                 }
-                //ourString += index.description
-                print(ourString)
-                ++curr
-            }
-            return ourString*/
+            } while(contents.count > 0)
             
-            let info = evaluateDescription(contents)
-            
-            if (info.result != nil){
-                print(info.result!)
-                return info.result!
-            }
-            
-            return ""
+            print(history)
+            return history
             
         }
     }
@@ -61,6 +49,7 @@ class CalculatorBrain {
     private enum Op: CustomStringConvertible{
         case Operand(Double)
         case Variable(String)
+        case Constant(String, Double)
         case UnaryOperation(String, Double -> Double)
         case BinaryOperation(String, (Double, Double) -> Double)
         
@@ -71,6 +60,8 @@ class CalculatorBrain {
                     return "\(operand)"
                 case .Variable(let symbol):
                     return symbol
+                case .Constant(let symbol, _):
+                    return symbol
                 case .UnaryOperation(let symbol, _):
                     return symbol
                 case .BinaryOperation(let symbol, _):
@@ -80,6 +71,7 @@ class CalculatorBrain {
         }
     }
     
+    private let missingValueSign = "?"
     private var opStack = [Op]()                      // opStack is the stack of Operations in the order they are added.
     private var knownOps = Dictionary<String, Op>()   // knownOps uses the operation symbols as keys and operation function as values.
     var variableValues = Dictionary<String, Double>() //variableValues holds variables the user pushes to the opStack with their values
@@ -103,7 +95,7 @@ class CalculatorBrain {
                 return value * -1
             }
             return abs(value)})
-        knownOps["π"] = Op.Operand(M_PI)
+        knownOps["π"] = Op.Constant("π", M_PI)
         variableValues["x"] = 10
         pushOperand("x")
     }
@@ -193,6 +185,9 @@ class CalculatorBrain {
                 }
                 return (nil, remaining)
                 
+            case .Constant(_, let operand):
+                return (operand, remaining)
+                
             case .UnaryOperation(_, let operation):     //If its an UnaryOperation we use the operation function for this operation.
                 
                 //We got sqrt now we look whats behind it in the array to know which operand we should apply it to.
@@ -240,11 +235,16 @@ class CalculatorBrain {
             case .Variable(_):
                 return (op.description, remaining)
                 
+            case .Constant(_, _):
+                return (op.description, remaining)
+                
             case .UnaryOperation(_, _):
                 let operandEvaluation = evaluateDescription(remaining)
                 
                 if let operand = operandEvaluation.result {
                     return (op.description + "(\(operand))", operandEvaluation.remaining)
+                } else {
+                    return (op.description + "(\(missingValueSign))", remaining)
                 }
                 
             case .BinaryOperation(_, _):
@@ -254,8 +254,9 @@ class CalculatorBrain {
                     let operandEval2 = evaluateDescription(operandEval1.remaining)
                     
                     if let operand2 = operandEval2.result {
-                        
                         return (operand2 + op.description + operand1, operandEval2.remaining)
+                    } else {
+                        return (missingValueSign + op.description + operand1, operandEval1.remaining)
                     }
                 }
             }
