@@ -189,4 +189,27 @@ class MasterViewController: NSViewController {
             }
         }
     }
+    
+    /*
+     * getM
+     * pushes the variable M to the CalculatorBrains operation stack.
+     * @param sender - The NSButton object for the button pressed.
+     */
+    @IBAction func getM(sender: NSButton) {
+        if (isTyping) {
+            enter()
+        }
+       displayValue = brain.pushOperand("𝛭")
+    }
+    
+    /*
+     * setM
+     * sets a new value to the variable M in the CalculatorBrain.
+     * @param sender - The NSButton object for the button pressed.
+     */
+    @IBAction func setM(sender: NSButton) {
+            brain.variableValues["𝛭"] = displayValue
+            displayValue = brain.evaluate()
+            print("Pushed 𝛭 = \(brain.variableValues["𝛭"])")
+    }
 }
