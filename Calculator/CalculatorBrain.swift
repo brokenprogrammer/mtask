@@ -14,6 +14,38 @@ import Foundation
  */
 
 class CalculatorBrain {
+    var description: String {
+        get {
+            let contents = opStack
+            /*var curr = 0
+            var ourString = ""
+            
+            for index in contents{
+                switch index {
+                case .Operand(_):
+                    ourString += index.description
+                case .UnaryOperation(let symbol, _):
+                    ourString += "\(symbol)(\(10))"
+                default: break
+                }
+                //ourString += index.description
+                print(ourString)
+                ++curr
+            }
+            return ourString*/
+            
+            let info = evaluateDescription(contents)
+            
+            if (info.result != nil){
+                print(info.result!)
+                return info.result!
+            }
+            
+            return ""
+            
+        }
+    }
+    
     /*
      * Op is an enumeration that holds the different types of Operations our
      * calculator can make. 
@@ -159,7 +191,7 @@ class CalculatorBrain {
                 if let variable = variableValues[symbol] {
                     return (variable, remaining)
                 }
-                return (0, remaining)
+                return (nil, remaining)
                 
             case .UnaryOperation(_, let operation):     //If its an UnaryOperation we use the operation function for this operation.
                 
@@ -192,5 +224,42 @@ class CalculatorBrain {
             }
         }
         return (nil, ops)
+    }
+    
+    private func evaluateDescription(opss: [Op]) -> (result: String?, remaining: [Op]) {
+        
+        if (!opss.isEmpty) {
+            var remaining = opss
+            let op = remaining.removeLast()
+            print(op.description)
+            
+            switch op {
+            case .Operand(_):
+                return (op.description, remaining)
+                
+            case .Variable(_):
+                return (op.description, remaining)
+                
+            case .UnaryOperation(_, _):
+                let operandEvaluation = evaluateDescription(remaining)
+                
+                if let operand = operandEvaluation.result {
+                    return (op.description + "(\(operand))", operandEvaluation.remaining)
+                }
+                
+            case .BinaryOperation(_, _):
+                let operandEval1 = evaluateDescription(remaining)
+                
+                if let operand1 = operandEval1.result {
+                    let operandEval2 = evaluateDescription(operandEval1.remaining)
+                    
+                    if let operand2 = operandEval2.result {
+                        
+                        return (operand2 + op.description + operand1, operandEval2.remaining)
+                    }
+                }
+            }
+        }
+        return (nil, opss)
     }
 }

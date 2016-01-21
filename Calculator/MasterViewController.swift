@@ -96,6 +96,7 @@ class MasterViewController: NSViewController {
             }
             appendHistory("\(displayValue!) ⏎ ")
         }
+        //brain.description
     }
     
     /*
@@ -138,6 +139,8 @@ class MasterViewController: NSViewController {
         } else {
             displayValue = nil
         }
+        
+        brain.description
     }
     
     /*
