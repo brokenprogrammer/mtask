@@ -106,11 +106,8 @@
 				ABAC10F91C52389D0097A217 /* Controllers */,
 				AB989B9B1C49BD3B00D0271F /* GUI */,
 				AB13ECA51C494403006E134C /* AppDelegate.swift */,
-				AB13ECA71C494403006E134C /* Assets.xcassets */,
 				AB13ECA91C494403006E134C /* MainMenu.xib */,
-				AB989B971C49BD2E00D0271F /* MasterViewController.swift */,
-				AB78AAC11C4DB10D00D374BF /* CalculatorBrain.swift */,
-				AB989B981C49BD2E00D0271F /* MasterViewController.xib */,
+				AB13ECA71C494403006E134C /* Assets.xcassets */,
 				AB13ECAC1C494403006E134C /* Info.plist */,
 			);
 			path = Calculator;
@@ -137,6 +134,7 @@
 		AB989B9B1C49BD3B00D0271F /* GUI */ = {
 			isa = PBXGroup;
 			children = (
+				AB989B981C49BD2E00D0271F /* MasterViewController.xib */,
 			);
 			name = GUI;
 			sourceTree = "<group>";
@@ -144,6 +142,7 @@
 		ABAC10F91C52389D0097A217 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				AB989B971C49BD2E00D0271F /* MasterViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -151,6 +150,7 @@
 		ABAC10FA1C5238A50097A217 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AB78AAC11C4DB10D00D374BF /* CalculatorBrain.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";

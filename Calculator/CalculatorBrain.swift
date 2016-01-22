@@ -18,7 +18,7 @@ class CalculatorBrain {
         get {
             var history = [String]()
             var contents = opStack
-            var info = evaluateDescription(contents, parrentBinary: false)
+            var info = evaluateDescription(contents)
             
             repeat {
             if (info.result != nil) {
@@ -26,7 +26,7 @@ class CalculatorBrain {
                 //history.append(info.result!)
                 history.insert(info.result!, atIndex: 0)
                 contents = info.remaining
-                info = evaluateDescription(contents, parrentBinary: false)
+                info = evaluateDescription(contents)
                 }
             } while(contents.count > 0)
             
@@ -68,6 +68,30 @@ class CalculatorBrain {
                     return symbol
                 case .BinaryOperation(let symbol, _):
                     return symbol
+                }
+            }
+        }
+        
+        var precedence: Int {
+            get {
+                switch self {
+                case .Operand(_):
+                    return Int.min
+                case .Variable(_):
+                    return Int.max
+                case .Constant(_, _):
+                    return Int.max
+                case .UnaryOperation(_, _):
+                    return Int.max
+                case .BinaryOperation(let symbol, _):
+                    switch symbol {
+                        case "*":
+                        return Int.min
+                        case "/":
+                        return Int.min
+                    default:
+                        return Int.max
+                    }
                 }
             }
         }
@@ -224,7 +248,7 @@ class CalculatorBrain {
         return (nil, ops)
     }
     
-    private func evaluateDescription(opss: [Op], parrentBinary: Bool) -> (result: String?, remaining: [Op]) {
+    private func evaluateDescription(opss: [Op]) -> (result: String?, remaining: [Op]) {
         
         if (!opss.isEmpty) {
             var remaining = opss
@@ -241,7 +265,7 @@ class CalculatorBrain {
                 return (op.description, remaining)
                 
             case .UnaryOperation(_, _):
-                let operandEvaluation = evaluateDescription(remaining, parrentBinary: false)
+                let operandEvaluation = evaluateDescription(remaining)
                 
                 if let operand = operandEvaluation.result {
                     return (op.description + "(\(operand))", operandEvaluation.remaining)
@@ -250,20 +274,27 @@ class CalculatorBrain {
                 }
                 
             case .BinaryOperation(_, _):
-                let operandEval1 = evaluateDescription(remaining, parrentBinary: true)
+                let operandEval1 = evaluateDescription(remaining)
                 
-                if let operand1 = operandEval1.result {
-                    let operandEval2 = evaluateDescription(operandEval1.remaining, parrentBinary: true)
+                if var operand1 = operandEval1.result {
+                    let operandEval2 = evaluateDescription(operandEval1.remaining)
+                    
+                    let second = remaining.removeLast().precedence
+                    //let third = remaining.removeLast().precedence
                     
                     if let operand2 = operandEval2.result {
-                        if (parrentBinary == true) {
-                            return ("(" + operand2 + op.description + operand1 + ")", operandEval2.remaining)
+                        //If there is a plus sign after the * sign... then op will be smaller than second, but with a number as well same
+                        if (op.precedence < second) {
+                            print("op1 :\(operand1)")
+                            operand1 = "(\(operand1))"
                         }
                         return (operand2 + op.description + operand1, operandEval2.remaining)
                     } else {
+                        //Not enough values for BinaryOperation, missing one value
                         return (missingValueSign + op.description + operand1, operandEval1.remaining)
                     }
                 } else {
+                    //Two missing values
                     return (missingValueSign + op.description + missingValueSign, remaining)
                 }
             }
@@ -278,5 +309,13 @@ class CalculatorBrain {
      */
     func clearStack() {
         opStack = [Op]()
+    }
+    
+    /*
+     * clearVariables
+     * This function resets the variables array by removing all values in it.
+     */
+    func clearVariables() {
+        variableValues.removeAll()
     }
 }
