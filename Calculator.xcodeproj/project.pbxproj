@@ -102,6 +102,8 @@
 		AB13ECA41C494403006E134C /* Calculator */ = {
 			isa = PBXGroup;
 			children = (
+				ABAC10FA1C5238A50097A217 /* Models */,
+				ABAC10F91C52389D0097A217 /* Controllers */,
 				AB989B9B1C49BD3B00D0271F /* GUI */,
 				AB13ECA51C494403006E134C /* AppDelegate.swift */,
 				AB13ECA71C494403006E134C /* Assets.xcassets */,
@@ -137,6 +139,20 @@
 			children = (
 			);
 			name = GUI;
+			sourceTree = "<group>";
+		};
+		ABAC10F91C52389D0097A217 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		ABAC10FA1C5238A50097A217 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

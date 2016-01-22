@@ -30,7 +30,7 @@ class CalculatorBrain {
                 }
             } while(contents.count > 0)
             
-            print(history)
+            //print(history)
             return history.joinWithSeparator(", ")
             
         }
@@ -185,6 +185,7 @@ class CalculatorBrain {
                 if let variable = variableValues[symbol] {
                     return (variable, remaining)
                 }
+                print("Returned Nil")
                 return (nil, remaining)
                 
             case .Constant(_, let operand):
