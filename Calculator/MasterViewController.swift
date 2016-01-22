@@ -148,9 +148,11 @@ class MasterViewController: NSViewController {
      */
     @IBAction func reset(sender: AnyObject) {
         isTyping = false
-        displayValue = 0
-        history.stringValue = ""
-        display.stringValue = "0"
+        displayValue = nil
+        history.stringValue = defaultHistory
+        display.stringValue = defaultDisplayText
+        brain.variableValues.removeAll()
+        brain.clearStack()
     }
     
     /*

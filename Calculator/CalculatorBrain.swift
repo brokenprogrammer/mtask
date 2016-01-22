@@ -269,4 +269,13 @@ class CalculatorBrain {
         }
         return (nil, opss)
     }
+    
+    /*
+     * clearStack
+     * This function is used to reset the stack of operations the calculator
+     * uses.
+     */
+    func clearStack() {
+        opStack = [Op]()
+    }
 }
