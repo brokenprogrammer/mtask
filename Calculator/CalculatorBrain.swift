@@ -72,25 +72,33 @@ class CalculatorBrain {
             }
         }
         
+        /*
+         * Precedence
+         * This is a way for us to organize the order of how the calulation history should be shown.
+         * For example in the calculation of 3 * 5 + 4 the history should look like 3 * (5 + 4)
+         * So what Precedence is doing is that it returns a Integer value depending on what type the Op is
+         * if the Op is for example a Operand, Variable, Constant or a UnaryOperation we want the Precedence
+         * to be the max value since theese are always prioritized.
+         * 
+         * Multiplication & Division also have the max value since in the recuring evaluation of the 
+         * description the loop will check if the currently checked Op has a higher Precedence than the next one
+         * if that is the case the value currently being calculated will get parentesis appended to it.
+         * This will only become true if there is a division or multiplication combined with any other kind of operation.
+         *
+         */
         var precedence: Int {
             get {
                 switch self {
-                case .Operand(_):
-                    return Int.min
-                case .Variable(_):
-                    return Int.max
-                case .Constant(_, _):
-                    return Int.max
-                case .UnaryOperation(_, _):
+                case .Operand(_), .Variable(_), .Constant(_, _), .UnaryOperation(_, _):
                     return Int.max
                 case .BinaryOperation(let symbol, _):
                     switch symbol {
                         case "*":
-                        return Int.min
-                        case "/":
-                        return Int.min
-                    default:
                         return Int.max
+                        case "÷":
+                        return Int.max
+                    default:
+                        return Int.min
                     }
                 }
             }
@@ -254,47 +262,44 @@ class CalculatorBrain {
             var remaining = opss
             let op = remaining.removeLast()
             
+            // Switches over the removed value that remaining.removeLast() returns.
             switch op {
-            case .Operand(_):
+            case .Operand(_), .Variable(_), .Constant(_, _):        //If the case is either a Operand, Variable or Constant it will not be changed just return the symbol or number.
                 return (op.description, remaining)
                 
-            case .Variable(_):
-                return (op.description, remaining)
-                
-            case .Constant(_, _):
-                return (op.description, remaining)
-                
-            case .UnaryOperation(_, _):
+            case .UnaryOperation(_, _):                             //If the case is UnaryOperation the content will always be inside parantesis so its appended to the operand.
                 let operandEvaluation = evaluateDescription(remaining)
                 
                 if let operand = operandEvaluation.result {
+                    //Returning the symbol for the operation as well as whats being operated on within the parentesis.
                     return (op.description + "(\(operand))", operandEvaluation.remaining)
                 } else {
+                    //If there is not enough values in the opStack we replace the values with a missingSign
                     return (op.description + "(\(missingValueSign))", remaining)
                 }
                 
-            case .BinaryOperation(_, _):
+            case .BinaryOperation(_, _):                            //If the case is BinaryOperation we are using Precedence to check if it should append a parentesis to right value
                 let operandEval1 = evaluateDescription(remaining)
                 
                 if var operand1 = operandEval1.result {
                     let operandEval2 = evaluateDescription(operandEval1.remaining)
                     
+                    //second is Op that comes after op in the opStack
                     let second = remaining.removeLast().precedence
-                    //let third = remaining.removeLast().precedence
                     
                     if let operand2 = operandEval2.result {
-                        //If there is a plus sign after the * sign... then op will be smaller than second, but with a number as well same
-                        if (op.precedence < second) {
-                            print("op1 :\(operand1)")
+                        //If the current Op types precedence is higher than the upcoming one then put the value in parameters.
+                        if (op.precedence > second) {
                             operand1 = "(\(operand1))"
                         }
+                        //Return a standard BinaryOperation
                         return (operand2 + op.description + operand1, operandEval2.remaining)
                     } else {
-                        //Not enough values for BinaryOperation, missing one value
+                        //Not enough values for BinaryOperation, missing one value.
                         return (missingValueSign + op.description + operand1, operandEval1.remaining)
                     }
                 } else {
-                    //Two missing values
+                    //Two missing values for BinaryOperation.
                     return (missingValueSign + op.description + missingValueSign, remaining)
                 }
             }

@@ -12,7 +12,6 @@
 		AB13ECAB1C494403006E134C /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB13ECA91C494403006E134C /* MainMenu.xib */; };
 		AB13ECB61C494403006E134C /* CalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB13ECB51C494403006E134C /* CalculatorTests.swift */; };
 		AB13ECC11C494403006E134C /* CalculatorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB13ECC01C494403006E134C /* CalculatorUITests.swift */; };
-		AB1434A11C4E8C0F00CED04A /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = AB1434A01C4E8C0F00CED04A /* README.md */; };
 		AB78AAC21C4DB10D00D374BF /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB78AAC11C4DB10D00D374BF /* CalculatorBrain.swift */; };
 		AB989B991C49BD2E00D0271F /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB989B971C49BD2E00D0271F /* MasterViewController.swift */; };
 		AB989B9A1C49BD2E00D0271F /* MasterViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AB989B981C49BD2E00D0271F /* MasterViewController.xib */; };
@@ -82,8 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				AB13ECA41C494403006E134C /* Calculator */,
-				AB13ECB41C494403006E134C /* CalculatorTests */,
 				AB13ECBF1C494403006E134C /* CalculatorUITests */,
+				AB13ECB41C494403006E134C /* CalculatorTests */,
 				AB13ECA31C494403006E134C /* Products */,
 				AB1434A01C4E8C0F00CED04A /* README.md */,
 			);
@@ -107,8 +106,8 @@
 				AB989B9B1C49BD3B00D0271F /* GUI */,
 				AB13ECA51C494403006E134C /* AppDelegate.swift */,
 				AB13ECA91C494403006E134C /* MainMenu.xib */,
-				AB13ECA71C494403006E134C /* Assets.xcassets */,
 				AB13ECAC1C494403006E134C /* Info.plist */,
+				AB13ECA71C494403006E134C /* Assets.xcassets */,
 			);
 			path = Calculator;
 			sourceTree = "<group>";
@@ -120,7 +119,7 @@
 				AB13ECB71C494403006E134C /* Info.plist */,
 			);
 			path = CalculatorTests;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		AB13ECBF1C494403006E134C /* CalculatorUITests */ = {
 			isa = PBXGroup;
@@ -288,7 +287,6 @@
 			files = (
 				AB78AAC21C4DB10D00D374BF /* CalculatorBrain.swift in Sources */,
 				AB989B991C49BD2E00D0271F /* MasterViewController.swift in Sources */,
-				AB1434A11C4E8C0F00CED04A /* README.md in Sources */,
 				AB13ECA61C494403006E134C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
