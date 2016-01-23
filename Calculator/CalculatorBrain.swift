@@ -317,6 +317,16 @@ class CalculatorBrain {
     }
     
     /*
+    * clearLastAction
+    * This function is used to remove the last action made in the calculator.
+    */
+    func clearLastAction() {
+        if (!opStack.isEmpty){
+            opStack.removeLast()
+        }
+    }
+    
+    /*
      * clearVariables
      * This function resets the variables array by removing all values in it.
      */

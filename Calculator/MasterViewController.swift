@@ -167,6 +167,10 @@ class MasterViewController: NSViewController {
                 isTyping = false
                 displayValue = 0
             }
+        } else {
+            //Here we remove last appended thing to the opStack and update display.
+            brain.clearLastAction()
+            displayValue = brain.evaluate()
         }
     }
     
