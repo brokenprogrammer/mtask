@@ -105,10 +105,16 @@ class CalculatorBrain {
         }
     }
     
+    enum OperationResult {
+        case Success(Double)
+        case Failiure(String)
+    }
+    
     private let missingValueSign = "?"
     private var opStack = [Op]()                      // opStack is the stack of Operations in the order they are added.
     private var knownOps = Dictionary<String, Op>()   // knownOps uses the operation symbols as keys and operation function as values.
     var variableValues = Dictionary<String, Double>() //variableValues holds variables the user pushes to the opStack with their values
+    var error = String?()
     
     /*
      * CalculatorBrain Initializer
@@ -142,9 +148,9 @@ class CalculatorBrain {
      * @param operand - A double that will represent a number the calculator can work with.
      * @returns evaluate() - A function that evaluates the entire opStack.
      */
-    func pushOperand(operand: Double) -> Double? {
+    func pushOperand(operand: Double) -> OperationResult? {
         opStack.append(Op.Operand(operand))
-        return evaluate()
+        return evaluateAndReportErrors()
     }
     
     /*
@@ -155,11 +161,10 @@ class CalculatorBrain {
     * @param symbol - A String that will represent a varialbe the calculator can work with.
     * @returns evaluate() - A function that evaluates the entire opStack.
     */
-    func pushOperand(symbol: String) -> Double? {
-        //if variableValues[symbol] != nil {
-            opStack.append(Op.Variable(symbol))
-        //}
-        return evaluate()
+    func pushOperand(symbol: String) -> OperationResult? {
+        opStack.append(Op.Variable(symbol))
+        //return evaluate()
+        return evaluateAndReportErrors()
     }
     
     /*
@@ -170,11 +175,12 @@ class CalculatorBrain {
      * @param symbol - A String representing a mathematical operation like "+" or "√"
      * @returns evaluate() - A function that evaluates the entire opStack.
      */
-    func preformOperation(symbol: String) -> Double? {
+    func preformOperation(symbol: String) -> OperationResult? {
         if let operation = knownOps[symbol] {
             opStack.append(operation)
         }
-        return evaluate()
+        //return evaluate()
+        return evaluateAndReportErrors()
     }
     
     /*
@@ -189,6 +195,27 @@ class CalculatorBrain {
         let (result, remaining) = evaluate(opStack)
         print("\(opStack) = \(result) with \(remaining) left over.")
         return result
+    }
+    
+    func evaluateAndReportErrors() -> (OperationResult){
+        if let result = evaluate(opStack).result {
+        
+            if (result.isNaN) {
+                return OperationResult.Failiure("Not a number.")
+            } else if (result.isInfinite) {
+                return OperationResult .Failiure("Infinite number.")
+            } else {
+                return OperationResult.Success(result)
+            }
+        } else {
+            if let resultError = error {
+                error = nil
+                
+                return OperationResult.Failiure(resultError)
+            } else {
+                return OperationResult.Failiure("Error")
+            }
+        }
     }
     
     /*
@@ -217,7 +244,7 @@ class CalculatorBrain {
                 if let variable = variableValues[symbol] {
                     return (variable, remaining)
                 }
-                print("Returned Nil")
+                error = "\(symbol) is not set."
                 return (nil, remaining)
                 
             case .Constant(_, let operand):
@@ -230,8 +257,12 @@ class CalculatorBrain {
                 
                 //If the rest of the values could be evaluated we use the operand result it returned.
                 if let operand = operandEvaluation.result {
+                    let operationResult = operation(operand)
+                    
                     //Then returns the new result which is the operation for this UnaryOperation.
-                    return (operation(operand), operandEvaluation.remaining)
+                    return (operationResult, operandEvaluation.remaining)
+                } else {
+                    error = "Missing unary operand"
                 }
                 
             case .BinaryOperation(_, let operation):   //If its an BinaryOperation we use the operation function for this operation.
@@ -248,7 +279,11 @@ class CalculatorBrain {
                     if let operand2 = op2Evaluation.result {
                         //Returns the operation using operand1 and operand2 as well as the remainder for op2Evaluation since its used last.
                         return (operation(operand1, operand2), op2Evaluation.remaining)
+                    } else {
+                        error = "Missing binary operand."
                     }
+                } else {
+                    error = "Missing binary operand."
                 }
                 
             }

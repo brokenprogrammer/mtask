@@ -83,7 +83,14 @@ class MasterViewController: NSViewController {
         isTyping = false
         if (displayValue != nil) {
             if let result = brain.pushOperand(displayValue!) {
-                displayValue = result
+                //displayValue = result
+                switch result {
+                case .Success(let num):
+                    displayValue = num
+                case .Failiure(let str):
+                    display.stringValue = str
+                }
+                print(brain.evaluateAndReportErrors())
             } else {
                 displayValue = nil
             }
@@ -98,7 +105,14 @@ class MasterViewController: NSViewController {
         isTyping = false
         if (displayValue != nil) {
             if let result = brain.pushOperand(displayValue!) {
-                displayValue = result
+                //displayValue = result
+                switch result {
+                case .Success(let num):
+                    displayValue = num
+                case .Failiure(let str):
+                    display.stringValue = str
+                }
+                print(brain.evaluateAndReportErrors())
             } else {
                 displayValue = nil
             }
@@ -124,7 +138,14 @@ class MasterViewController: NSViewController {
         }
         
         if let result = brain.preformOperation(operation) {
-            displayValue = result
+            //displayValue = result
+            switch result {
+            case .Success(let num):
+                displayValue = num
+            case .Failiure(let str):
+                display.stringValue = str
+            }
+            print(brain.evaluateAndReportErrors())
         } else {
             displayValue = nil
         }
@@ -189,7 +210,13 @@ class MasterViewController: NSViewController {
             }
         } else if(!isTyping) {
             if let result = brain.preformOperation("±") {
-                displayValue = result
+                //displayValue = result
+                switch result {
+                case .Success(let num):
+                    displayValue = num
+                case .Failiure(let str):
+                    display.stringValue = str
+                }
             } else {
                 displayValue = nil
             }
@@ -205,7 +232,15 @@ class MasterViewController: NSViewController {
         if (isTyping) {
             enter()
         }
-       displayValue = brain.pushOperand("𝛭")
+       //displayValue = brain.pushOperand("𝛭")
+        if let result = brain.pushOperand("") {
+            switch result {
+            case .Success(let num):
+                displayValue = num
+            case .Failiure(let str):
+                display.stringValue = str
+            }
+        }
     }
     
     /*
