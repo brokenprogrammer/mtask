@@ -7,12 +7,26 @@
 //
 
 import Foundation
+
+/*
+ * OperationResult
+ * An enum that is used within this class and its controller class.
+ * this is the backbone of how the Error system works.
+ * What happends is that our evaluateAndReportErrors function returns this enum
+ * type instead of an integer, this enum type has two cases either a success 
+ * or a fail. Success being the result in a double and Fail being the error 
+ * message in a string.
+ */
+enum OperationResult {
+    case Success(Double)
+    case Failiure(String)
+}
+
 /*
  * CalculatorBrain
  * This is the model in our MVC that preforms the backend operations
  * this will act as our brain which makes all the calculations.
  */
-
 class CalculatorBrain {
     var description: String {
         get {
@@ -30,7 +44,6 @@ class CalculatorBrain {
                 }
             } while(contents.count > 0)
             
-            //print(history)
             return history.joinWithSeparator(", ")
             
         }
@@ -105,16 +118,11 @@ class CalculatorBrain {
         }
     }
     
-    enum OperationResult {
-        case Success(Double)
-        case Failiure(String)
-    }
-    
     private let missingValueSign = "?"
     private var opStack = [Op]()                      // opStack is the stack of Operations in the order they are added.
     private var knownOps = Dictionary<String, Op>()   // knownOps uses the operation symbols as keys and operation function as values.
     var variableValues = Dictionary<String, Double>() //variableValues holds variables the user pushes to the opStack with their values
-    var error = String?()
+    var error = String?()                             //If there is an error in the evaluation that the enum cannot find it will be stored here
     
     /*
      * CalculatorBrain Initializer
@@ -136,8 +144,6 @@ class CalculatorBrain {
             }
             return abs(value)})
         knownOps["π"] = Op.Constant("π", M_PI)
-        //variableValues["x"] = 10
-        //pushOperand("x")
     }
     
     /*
@@ -146,7 +152,10 @@ class CalculatorBrain {
      * evaluate which will evaluate the entire stack. 
      *
      * @param operand - A double that will represent a number the calculator can work with.
-     * @returns evaluate() - A function that evaluates the entire opStack.
+     * @returns OperationResult() - An enum type that can contain either
+     * a string or double depending on success or fail. Because this function returns
+     * OperationResult which is used inside the Controller to display the result this
+     * function can be called directly while setting the display value.
      */
     func pushOperand(operand: Double) -> OperationResult? {
         opStack.append(Op.Operand(operand))
@@ -159,7 +168,10 @@ class CalculatorBrain {
     * evaluate which will evaluate the entire stack.
     *
     * @param symbol - A String that will represent a varialbe the calculator can work with.
-    * @returns evaluate() - A function that evaluates the entire opStack.
+    * @returns OperationResult() - An enum type that can contain either 
+    * a string or double depending on success or fail. Because this function returns
+    * OperationResult which is used inside the Controller to display the result this
+    * function can be called directly while setting the display value.
     */
     func pushOperand(symbol: String) -> OperationResult? {
         opStack.append(Op.Variable(symbol))
@@ -173,7 +185,10 @@ class CalculatorBrain {
      * then calls the evaluate which will evaluate the entire stack.
      *
      * @param symbol - A String representing a mathematical operation like "+" or "√"
-     * @returns evaluate() - A function that evaluates the entire opStack.
+     * @returns OperationResult() - An enum type that can contain either
+     * a string or double depending on success or fail. Because this function returns
+     * OperationResult which is used inside the Controller to display the result this
+     * function can be called directly while setting the display value.
      */
     func preformOperation(symbol: String) -> OperationResult? {
         if let operation = knownOps[symbol] {
@@ -197,6 +212,17 @@ class CalculatorBrain {
         return result
     }
     
+    /*
+     * evaluateAndReportErrors
+     * This function is just as the normal evaluate function calling the 
+     * evaluate(opStack) to calculate the values inside the opStack.
+     * Then after its finished this function will check if either the Double? 
+     * retrieved from the function is not a number or infinite and return errors
+     * accordingly.
+     *
+     * @returns OperationResult() - An enum type that can contain either
+     * a string or double depending on success or fail.
+     */
     func evaluateAndReportErrors() -> (OperationResult){
         if let result = evaluate(opStack).result {
         

@@ -20,28 +20,60 @@ class MasterViewController: NSViewController {
     var isTyping = false
     var clearHistory = false
     
+    
     /*
-     * a getter setter variable that we use to append values to the display
-     * @get - returns a formatted version of the display value, formatted to Double
-     * @set - sets the displays string value to the newValue entered in the set statement
+     * displayValue
+     * A getter variable that we use to format values to doubles.
+     * @get - returns a formatted version of the display value, formatted to Double 
+     * returns nil if the value cannot be formatted.
      */
     var displayValue: Double? {
+        if let displayValue = NSNumberFormatter().numberFromString(display.stringValue) {
+            return displayValue.doubleValue
+        } else {
+            return nil
+        }
+    }
+    
+    /*
+    * displayResult
+    * A getter setter variable that we use to append values to the display
+    * @set - checks if the newValue is nil, if not it sets the display.stringValue
+    * to the newValue. Else it sets the display to show the default text.
+    * @get - returns a double if the value inside it can be converted to a Double
+    * otherwise it returns the Failiure case with the current stringValue
+    */
+    var displayResult: OperationResult? {
         get {
-            if let displayValue = NSNumberFormatter().numberFromString(display.stringValue) {
-                return displayValue.doubleValue
+            //Doing optional binding to see if displayValue contains a number.
+            if let displayValue = displayValue {
+                //Return the number within displayValue.
+                return .Success(displayValue)
             } else {
-                return nil
+                //Return the error string found in display.stringValue.
+                return .Failiure(display.stringValue)
             }
         }
         set {
             history.stringValue = brain.description + " ="
+            //Checking if the newValue is nil since this is of type optional.
             if (newValue != nil) {
-                display.stringValue = "\(newValue!)"
-                //isTyping = false
+                //Wraping newValue into non optional and switching through it.
+                switch newValue! {
+                case let .Success(newValue):
+                    //Case its a number value use displayValue to set the number.
+                    display.stringValue = "\(newValue)"
+                case let .Failiure(newValue):
+                    //Else if its a string value set it manually to the display.
+                    display.stringValue = newValue
+                }
             } else {
                 display.stringValue = defaultDisplayText
             }
             
+            isTyping = false
+            
+            //Appending history found in the brain.description
             if !brain.description.isEmpty {
                 history.stringValue = "\(brain.description) ="
             } else {
@@ -83,16 +115,9 @@ class MasterViewController: NSViewController {
         isTyping = false
         if (displayValue != nil) {
             if let result = brain.pushOperand(displayValue!) {
-                //displayValue = result
-                switch result {
-                case .Success(let num):
-                    displayValue = num
-                case .Failiure(let str):
-                    display.stringValue = str
-                }
-                print(brain.evaluateAndReportErrors())
+                displayResult = result
             } else {
-                displayValue = nil
+                displayResult = nil
             }
         }
     }
@@ -105,16 +130,9 @@ class MasterViewController: NSViewController {
         isTyping = false
         if (displayValue != nil) {
             if let result = brain.pushOperand(displayValue!) {
-                //displayValue = result
-                switch result {
-                case .Success(let num):
-                    displayValue = num
-                case .Failiure(let str):
-                    display.stringValue = str
-                }
-                print(brain.evaluateAndReportErrors())
+                displayResult = result
             } else {
-                displayValue = nil
+                displayResult = nil
             }
         }
     }
@@ -138,16 +156,9 @@ class MasterViewController: NSViewController {
         }
         
         if let result = brain.preformOperation(operation) {
-            //displayValue = result
-            switch result {
-            case .Success(let num):
-                displayValue = num
-            case .Failiure(let str):
-                display.stringValue = str
-            }
-            print(brain.evaluateAndReportErrors())
+            displayResult = result
         } else {
-            displayValue = nil
+            displayResult = nil
         }
     }
     
@@ -158,7 +169,8 @@ class MasterViewController: NSViewController {
      */
     func addConstant(value: Double) {
         isTyping = false
-        displayValue = value
+        //displayValue = value
+        displayResult = OperationResult.Success(value)
         enter()
     }
     
@@ -169,7 +181,7 @@ class MasterViewController: NSViewController {
      */
     @IBAction func reset(sender: AnyObject) {
         isTyping = false
-        displayValue = nil
+        displayResult = nil
         history.stringValue = defaultHistory
         display.stringValue = defaultDisplayText
         brain.variableValues.removeAll()
@@ -186,12 +198,12 @@ class MasterViewController: NSViewController {
                 display.stringValue = String(display.stringValue.characters.dropLast())
             } else {
                 isTyping = false
-                displayValue = 0
+                displayResult = OperationResult.Success(0)
             }
         } else {
             //Here we remove last appended thing to the opStack and update display.
             brain.clearLastAction()
-            displayValue = brain.evaluate()
+            displayResult = brain.evaluateAndReportErrors()
         }
     }
     
@@ -201,24 +213,19 @@ class MasterViewController: NSViewController {
      * @param sender - A Button object holding the current button pressed.
      */
     @IBAction func changeSign(sender: NSButtonCell) {
-        print(isTyping)
         if (isTyping) {
-            if (displayValue < 0) {
-                displayValue = displayValue! * -1
+            //if (displayValue < 0) {
+            if (displayResult != nil) {
+                displayResult = OperationResult.Success(displayValue! * -1)
+                isTyping = true
             } else {
-                displayValue = displayValue! - displayValue! * 2
+                displayResult = OperationResult.Success(displayValue! * 2)
             }
         } else if(!isTyping) {
             if let result = brain.preformOperation("±") {
-                //displayValue = result
-                switch result {
-                case .Success(let num):
-                    displayValue = num
-                case .Failiure(let str):
-                    display.stringValue = str
-                }
+                displayResult = result
             } else {
-                displayValue = nil
+                displayResult = nil
             }
         }
     }
@@ -232,14 +239,8 @@ class MasterViewController: NSViewController {
         if (isTyping) {
             enter()
         }
-       //displayValue = brain.pushOperand("𝛭")
-        if let result = brain.pushOperand("") {
-            switch result {
-            case .Success(let num):
-                displayValue = num
-            case .Failiure(let str):
-                display.stringValue = str
-            }
+        if let result = brain.pushOperand("𝛭") {
+            displayResult = result
         }
     }
     
@@ -250,7 +251,7 @@ class MasterViewController: NSViewController {
      */
     @IBAction func setM(sender: NSButton) {
             brain.variableValues["𝛭"] = displayValue
-            displayValue = brain.evaluate()
+            displayResult = brain.evaluateAndReportErrors()
             print("Pushed 𝛭 = \(brain.variableValues["𝛭"])")
     }
 }
