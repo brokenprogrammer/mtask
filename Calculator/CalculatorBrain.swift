@@ -28,11 +28,17 @@ enum OperationResult {
  * this will act as our brain which makes all the calculations.
  */
 class CalculatorBrain {
+    /*
+     * CalculatorBrain Description
+     * This is the class description property, it is used to return a string
+     * value representing the history of a calculation using the evaluateDescription
+     * function.
+     */
     var description: String {
         get {
-            var history = [String]()
-            var contents = opStack
-            var info = evaluateDescription(contents)
+            var history = [String]()                //Array for all separate calculations.
+            var contents = opStack                  //Copy of the opStack.
+            var info = evaluateDescription(contents)//Retrieving the first part of the description.
             
             repeat {
             if (info.result != nil) {
@@ -118,7 +124,7 @@ class CalculatorBrain {
         }
     }
     
-    private let missingValueSign = "?"
+    private let missingValueSign = "?"                // Private constant used as a placeholder if a value is missing in a calculation.
     private var opStack = [Op]()                      // opStack is the stack of Operations in the order they are added.
     private var knownOps = Dictionary<String, Op>()   // knownOps uses the operation symbols as keys and operation function as values.
     var variableValues = Dictionary<String, Double>() //variableValues holds variables the user pushes to the opStack with their values
@@ -163,19 +169,18 @@ class CalculatorBrain {
     }
     
     /*
-    * pushOperand
-    * This function pushes an variable to our opStack and then returns the function
-    * evaluate which will evaluate the entire stack.
-    *
-    * @param symbol - A String that will represent a varialbe the calculator can work with.
-    * @returns OperationResult() - An enum type that can contain either 
-    * a string or double depending on success or fail. Because this function returns
-    * OperationResult which is used inside the Controller to display the result this
-    * function can be called directly while setting the display value.
-    */
+     * pushOperand
+     * This function pushes an variable to our opStack and then returns the function
+     * evaluate which will evaluate the entire stack.
+     *
+     * @param symbol - A String that will represent a variable the calculator can work with.
+     * @returns OperationResult() - An enum type that can contain either
+     * a string or double depending on success or fail. Because this function returns
+     * OperationResult which is used inside the Controller to display the result this
+     * function can be called directly while setting the display value.
+     */
     func pushOperand(symbol: String) -> OperationResult? {
         opStack.append(Op.Variable(symbol))
-        //return evaluate()
         return evaluateAndReportErrors()
     }
     
@@ -194,7 +199,6 @@ class CalculatorBrain {
         if let operation = knownOps[symbol] {
             opStack.append(operation)
         }
-        //return evaluate()
         return evaluateAndReportErrors()
     }
     
@@ -317,6 +321,19 @@ class CalculatorBrain {
         return (nil, ops)
     }
     
+    /*
+     * evaluateDescription
+     * This function works in theory the same as evaluate the only difference is that
+     * this is fully based on strings, this function is used to recursivley retrieve
+     * history of the calculations that has been made. It also handles rules when it
+     * comes to precedence and adding parantesis for values. It uses the indivudual Ops
+     * description from the Op enum to return the string description of the values which is
+     * symbol for variables and constants and numbers for operands.
+     *
+     * @returns a touple containing the result as a string value and the remaining opStack
+     * in failiure returns a touple with nil as the first value setting the result optional
+     * to non existing.
+     */
     private func evaluateDescription(opss: [Op]) -> (result: String?, remaining: [Op]) {
         
         if (!opss.isEmpty) {
