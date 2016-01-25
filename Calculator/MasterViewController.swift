@@ -250,8 +250,20 @@ class MasterViewController: NSViewController {
      * @param sender - The NSButton object for the button pressed.
      */
     @IBAction func setM(sender: NSButton) {
+        if displayValue != nil {
             brain.variableValues["𝛭"] = displayValue
-            displayResult = brain.evaluateAndReportErrors()
-            print("Pushed 𝛭 = \(brain.variableValues["𝛭"])")
+        }
+        
+        let result = brain.evaluateAndReportErrors()
+        print("\(result)")
+        switch result {
+        case .Failiure("Operation Stack Empty."):
+            print("IsTrue")
+            displayResult = nil
+        default:
+            displayResult = result
+        }
+        
+        print("Pushed 𝛭 = \(brain.variableValues["𝛭"])")
     }
 }

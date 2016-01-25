@@ -318,6 +318,7 @@ class CalculatorBrain {
                 
             }
         }
+        error = "Operation Stack Empty."
         return (nil, ops)
     }
     
