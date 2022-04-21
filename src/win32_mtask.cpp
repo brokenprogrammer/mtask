@@ -23,15 +23,15 @@ Print(const WCHAR *Message, ...)
 
     WCHAR Buffer[1024];
     DWORD Length = wvsprintfW(Buffer, Message, Arguments);
-
+    DWORD Written;
+    
     if (GetFileType(ConsoleHandle) == FILE_TYPE_CHAR)
     {
-        DWORD Written;
         WriteConsoleW(ConsoleHandle, Buffer, Length, &Written, NULL);
     }
     else
     {
-        WriteFile(ConsoleHandle, Buffer, Length, &Written, NULL);
+        WriteFile(ConsoleHandle, Buffer, Length * sizeof(WCHAR), &Written, NULL);
     }
     
     va_end(Arguments);
