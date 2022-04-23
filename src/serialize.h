@@ -23,10 +23,16 @@ enum serialization_versions : int32_t
         Serialize(LBPSerializer, &(Datum->_fieldName)); \
     }
 
-#define ADD_STRING(_fieldAdded, _fieldName, _fieldLength) \
+#define ADD_LIST(_fieldAdded, _fieldName, _fieldLength) \
     if (LBPSerializer->DataVersion >= (_fieldAdded)) \
     { \
     Serialize(LBPSerializer, &(Datum->_fieldName), (Datum->_fieldLength)); \
+    }
+
+#define ADD_REF(_fieldAdded, _fieldName) \
+    if (LBPSerializer->DataVersion >= (_fieldAdded) && (Datum->_fieldName)) \
+    { \
+        Serialize(LBPSerializer, &(Datum->_fieldName), (1));    \
     }
 
 #define REM(_fieldAdded, _fieldRemoved, _type, _fieldName, _defaultValue) \

@@ -1,10 +1,10 @@
 struct tag
 {
-    char *Tag;
-    tag *Next;
+    uint32_t NameLength;
+    char *Name;
 };
 
-enum task_state
+enum task_state : uint32_t
 {
     TaskState_Pending,
     TaskState_Active,
@@ -16,20 +16,24 @@ enum task_state
 // TODO(Oskar): Replace linked lists
 struct task
 {
-    uint64_t ID;
+    uint32_t ID;
+
+    uint32_t SummaryLength;
     char *Summary;
 
     task_state State;
-    // Started
     double TimeSpent;
 
+    uint32_t NumberOfTags;
     tag *Tags;
     
     task *Parent;
+
+    uint32_t NumberOfChildren;
     task *Children;
 };
 
-enum sync_integration
+enum sync_integration : uint32_t
 {
     None,
     DevOps,
@@ -37,11 +41,13 @@ enum sync_integration
 };
 struct workspace
 {
+    uint32_t NameLength;
     char *Name;
 
     sync_integration SyncIntegration;
-    
-    task *FirstTask;
+
+    uint32_t NumberOfTasks;
+    task *Tasks;
 };
 
 struct mtask_config

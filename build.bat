@@ -17,7 +17,7 @@ if "%1" equ "release" (
     set COMPILE_FLAGS= /nologo /O1 /W4 /WX /Gm- /GR- /GS- /EHa- /Oi
     set LINK_FLAGS= /opt:ref /opt:icf /subsystem:console %COMMON_LIBS%
 ) else (
-    set COMPILE_FLAGS= /nologo /Od /W4 /WX /MTd /Gm- /GR- /GS- /EHa- /Zo /Oi /Zi /FC /wd4706 /wd4100
+    set COMPILE_FLAGS= /nologo /Od /W4 /WX /MTd /Gm- /GR- /GS- /EHa- /Zo /Oi /Zi /FC /wd4706 /wd4100 /wd4505
     set LINK_FLAGS= /opt:ref /incremental:no /Debug:full /subsystem:console %COMMON_LIBS%
 )
 if not exist build mkdir build
