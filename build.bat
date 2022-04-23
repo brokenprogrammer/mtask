@@ -15,14 +15,14 @@ set COMMON_LIBS= kernel32.lib user32.lib shell32.lib shlwapi.lib
 
 if "%1" equ "release" (
     set COMPILE_FLAGS= /nologo /O1 /W4 /WX /Gm- /GR- /GS- /EHa- /Oi
-    set LINK_FLAGS= /opt:ref /opt:icf /nodefaultlib /subsystem:console %COMMON_LIBS% libvcruntime.lib
+    set LINK_FLAGS= /opt:ref /opt:icf /subsystem:console %COMMON_LIBS%
 ) else (
-    set COMPILE_FLAGS= /nologo /Od /W4 /WX /MTd /Gm- /GR- /GS- /EHa- /Zo /Oi /Zi /FC
-    set LINK_FLAGS= /opt:ref /incremental:no /Debug:full /nodefaultlib /subsystem:console %COMMON_LIBS% libucrtd.lib libvcruntimed.lib
+    set COMPILE_FLAGS= /nologo /Od /W4 /WX /MTd /Gm- /GR- /GS- /EHa- /Zo /Oi /Zi /FC /wd4706 /wd4100
+    set LINK_FLAGS= /opt:ref /incremental:no /Debug:full /subsystem:console %COMMON_LIBS%
 )
 if not exist build mkdir build
 pushd build
 
-cl.exe %COMPILE_FLAGS% ../src/win32_mtask.cpp /link %LINK_FLAGS% /out:mtask.exe
+cl.exe %COMPILE_FLAGS% -D_CRT_SECURE_NO_WARNINGS=1 ../src/win32_mtask.cpp /link %LINK_FLAGS% /out:mtask.exe
 
 popd
