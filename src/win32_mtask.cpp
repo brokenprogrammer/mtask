@@ -41,21 +41,76 @@ Usage(char *Command = 0)
 // update
 // help
 
+static void
+CreateWorkspace(mtask_config *Config)
+{
+//    char WorkspaceFileName[512];
+//    sprintf(WorkspaceFileName, "%s.mtask", WorkspaceName);
+            
+    FILE *WorkSpaceFilePointer;
+    if (WorkSpaceFilePointer = fopen(Config->ActiveWorkspacePath, "w"))
+    {
+        workspace Workspace = {0};
+        Workspace.Name = Config->ActiveWorkspacePath;
+        Workspace.NameLength = Config->ActiveWorkspacePathLength;
+        Workspace.NumberOfTasks = 0;
+
+        lbp_serializer LBPSerializer = {0};
+        LBPSerializer.IsWriting = true;
+        LBPSerializer.FilePointer = WorkSpaceFilePointer;
+
+        SerializeIncludingVersion(&LBPSerializer, &Workspace);
+        fclose(WorkSpaceFilePointer);
+    }
+}
+
+static workspace
+LoadWorkspace(mtask_config *Config)
+{
+    workspace Workspace = {0};
+    
+    FILE *WorkSpaceFilePointer;
+    if (WorkSpaceFilePointer = fopen(Config->ActiveWorkspacePath, "r"))
+    {
+        lbp_serializer LBPSerializer = {0};
+        LBPSerializer.IsWriting = false;
+        LBPSerializer.FilePointer = WorkSpaceFilePointer;
+        SerializeIncludingVersion(&LBPSerializer, &Workspace);
+        fclose(WorkSpaceFilePointer);
+    }
+
+    return Workspace;
+}
+
+static void
+SaveWorkspace(workspace *Workspace)
+{
+    FILE *FilePointer;
+    if (FilePointer = fopen(Workspace->Name, "w+"))
+    {
+        lbp_serializer LBPSerializer = {0};
+        LBPSerializer.IsWriting = true;
+        LBPSerializer.FilePointer = FilePointer;
+        SerializeIncludingVersion(&LBPSerializer, Workspace);
+        fclose(FilePointer);
+    }
+}
+
 static mtask_config
 CreateConfiguration()
 {
     mtask_config Config = {0};
 
-    char WorkspaceName[512];
+    char *WorkspaceName = (char *)malloc(sizeof(char) * 512);
     printf("Enter a name for your workspace: ");
-    scanf("%s", &WorkspaceName);
+    scanf("%s", WorkspaceName);
 
     // NOTE(Oskar): Create file
     FILE *FilePointer;
     if (FilePointer = fopen("mtask.conf", "w"))
     {
-        Config.ActiveWorkspaceName = WorkspaceName;
-        Config.ActiveWorkspaceNameLength = (uint32_t)strlen(WorkspaceName);
+        Config.ActiveWorkspacePath = WorkspaceName;
+        Config.ActiveWorkspacePathLength = (uint32_t)strlen(WorkspaceName);
         Config.Loaded = true;
             
         lbp_serializer LBPSerializer = {0};
@@ -66,24 +121,7 @@ CreateConfiguration()
             printf("Successfully created a new configuration file!\n");
 
             // NOTE(Oskar): Now we create the workspace
-            char WorkspaceFileName[512];
-            sprintf(WorkspaceFileName, "%s.mtask", WorkspaceName);
-            
-            FILE *WorkSpaceFilePointer;
-            if (WorkSpaceFilePointer = fopen(WorkspaceFileName, "w"))
-            {
-                workspace Workspace = {0};
-                Workspace.Name = Config.ActiveWorkspaceName;
-                Workspace.NameLength = Config.ActiveWorkspaceNameLength;
-                Workspace.NumberOfTasks = 0;
-
-                LBPSerializer = {0};
-                LBPSerializer.IsWriting = true;
-                LBPSerializer.FilePointer = WorkSpaceFilePointer;
-
-                SerializeIncludingVersion(&LBPSerializer, &Workspace);
-                fclose(WorkSpaceFilePointer);
-            }
+            CreateWorkspace(&Config);
         }
         else
         {
@@ -138,6 +176,28 @@ LoadConfiguration()
     return Config;
 }
 
+static void
+AddTask(workspace *Workspace, char *Summary)
+{
+    Workspace->NumberOfTasks++;
+    Workspace->Tasks = (task *)realloc(Workspace->Tasks, sizeof(task) * Workspace->NumberOfTasks);
+    task *Task = &Workspace->Tasks[Workspace->NumberOfTasks - 1];
+
+    Task->ID = Workspace->NumberOfTasks;
+
+    Task->Summary = Summary;
+    Task->SummaryLength = (uint32_t)strlen(Summary);
+
+    Task->State = TaskState_Pending;
+    Task->TimeSpent = 0.0;
+
+    Task->NumberOfTags = 0;
+    Task->Parent = 0;
+    Task->NumberOfChildren = 0;
+
+    
+}
+
 int main(int ArgumentCount, char **Arguments)
 {
     if (ArgumentCount < 2)
@@ -147,23 +207,9 @@ int main(int ArgumentCount, char **Arguments)
 
     // NOTE(Oskar): Load configuration
     mtask_config Configuration = LoadConfiguration();
+    workspace Workspace = LoadWorkspace(&Configuration);
 
-    workspace Workspace = {0};
-    char WorkspaceFileName[512];
-    sprintf(WorkspaceFileName, "%s.mtask", Configuration.ActiveWorkspaceName);
-            
-    FILE *WorkSpaceFilePointer;
-    if (WorkSpaceFilePointer = fopen(WorkspaceFileName, "r"))
-    {
-        lbp_serializer LBPSerializer = {0};
-        LBPSerializer.IsWriting = false;
-        LBPSerializer.FilePointer = WorkSpaceFilePointer;
-        SerializeIncludingVersion(&LBPSerializer, &Workspace);
-        fclose(WorkSpaceFilePointer);
-    }
-
-
-    // TODO(Oskar): Verify that config and workspace is loaded.
+    // TODO(Oskar): Verify that config and workspace is loaded correctly.
     
     int CurrentArgument = 1;
     char *Command = Arguments[CurrentArgument++];
@@ -202,8 +248,10 @@ int main(int ArgumentCount, char **Arguments)
         }
         else
         {
-            //char *Summary = Arguments[CurrentArgument++];
-
+            char *Summary = Arguments[CurrentArgument++];
+            AddTask(&Workspace, Summary);
+            SaveWorkspace(&Workspace);
+            
             // TODO(Oskar); Parse tags
             //char *Tags = 0;
         }

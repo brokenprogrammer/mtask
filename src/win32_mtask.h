@@ -54,6 +54,6 @@ struct mtask_config
 {
     bool Loaded;
     
-    uint32_t ActiveWorkspaceNameLength;
-    char *ActiveWorkspaceName;
+    uint32_t ActiveWorkspacePathLength;
+    char *ActiveWorkspacePath;
 };

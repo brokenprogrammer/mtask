@@ -47,7 +47,7 @@ Serialize(lbp_serializer *LBPSerializer, char **Datum, uint32_t DatumLength)
     }
     else
     {
-        *Datum = (char *)malloc(sizeof(char) * DatumLength);
+        *Datum = (char *)malloc(sizeof(char) * DatumLength + 1);
         fread(*Datum, sizeof(char) * DatumLength, 1, LBPSerializer->FilePointer);
         (*Datum)[DatumLength] = 0;
     }
@@ -162,10 +162,10 @@ static void
 Serialize(lbp_serializer *LBPSerializer, mtask_config *Datum)
 {
     //Serialize(LBPSerializer, &Datum->ActiveWorkspaceNameLength);
-    ADD(SV_Initial, ActiveWorkspaceNameLength);
+    ADD(SV_Initial, ActiveWorkspacePathLength);
 
     //Serialize(LBPSerializer, Datum->ActiveWorkspaceName, Datum->ActiveWorkspaceNameLength);
-    ADD_LIST(SV_Initial, ActiveWorkspaceName, ActiveWorkspaceNameLength);
+    ADD_LIST(SV_Initial, ActiveWorkspacePath, ActiveWorkspacePathLength);
 }
 
 static bool
