@@ -193,9 +193,25 @@ AddTask(workspace *Workspace, char *Summary)
 
     Task->NumberOfTags = 0;
     Task->Parent = 0;
-    Task->NumberOfChildren = 0;
+    Task->NumberOfChildren = 0;    
+}
 
-    
+static void
+ListTasks(workspace *Workspace, char *ID = 0)
+{
+    if (ID)
+    {
+        // NOTE(Oskar): List all  task children
+    }
+    else
+    {
+        // NOTE(Oskar): List all tasks
+        printf("%-10s%-25s\n", "ID", "Name");
+        for(uint32_t Index = 0; Index < Workspace->NumberOfTasks; ++Index)
+        {
+            printf("%-10d%-25s\n", Workspace->Tasks[Index].ID, Workspace->Tasks[Index].Summary);
+        }
+    }
 }
 
 int main(int ArgumentCount, char **Arguments)
@@ -242,7 +258,7 @@ int main(int ArgumentCount, char **Arguments)
     else if (strcmp(Command, "add") == 0)
     {
         // add [parent?:]["summary"] [tags?]
-        if (ArgumentCount < 4)
+        if (ArgumentCount < 3)
         {
             Usage(Command);
         }
@@ -255,7 +271,18 @@ int main(int ArgumentCount, char **Arguments)
             // TODO(Oskar); Parse tags
             //char *Tags = 0;
         }
-
+    }
+    else if (strcmp(Command, "list") == 0)
+    {
+        // list [id?]
+        if (ArgumentCount > 2)
+        {
+            //char *ID = Arguments[CurrentArgument++];
+        }
+        else
+        {
+            ListTasks(&Workspace);
+        }
     }
 
     return 0;
